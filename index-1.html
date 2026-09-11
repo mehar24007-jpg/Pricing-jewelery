@@ -1,0 +1,1472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<meta name="theme-color" content="#14110d">
+<meta name="description" content="Custom jewelry costing and pricing calculator with cloud backup.">
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" href="/icon-192.png">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<title>Jewelry Costing &amp; Pricing Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#14110d;
+    --surface:#1e1912;
+    --surface-2:#262019;
+    --surface-3:#2d251b;
+    --gold:#c9a24b;
+    --gold-soft:#e4c97a;
+    --ivory:#f3ecdd;
+    --muted:#a89a82;
+    --danger:#c1573d;
+    --danger-soft:#3a2119;
+    --border:#3a3025;
+    --success:#6fae6a;
+    --radius-card:18px;
+    --radius-field:10px;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+
+  body{
+    background:var(--bg);
+    color:var(--ivory);
+    font-family:'Inter',sans-serif;
+    -webkit-tap-highlight-color:transparent;
+    padding-bottom:56px;
+  }
+
+  .urdu{
+    font-family:'Noto Nastaliq Urdu','Inter',sans-serif;
+    direction:rtl;
+    font-weight:600;
+  }
+
+  /* ---------- Header ---------- */
+  header{
+    padding:34px 20px 22px;
+    background:
+      radial-gradient(120% 140% at 15% -10%, rgba(201,162,75,.16), transparent 55%),
+      var(--bg);
+    border-bottom:1px solid var(--border);
+  }
+  .kicker{
+    color:var(--gold);
+    font-size:13px;
+    letter-spacing:.02em;
+    margin:0 0 6px;
+  }
+  h1{
+    font-family:'Playfair Display',serif;
+    font-weight:600;
+    font-size:28px;
+    line-height:1.2;
+    margin:0 0 6px;
+    color:var(--ivory);
+  }
+  header p.sub{
+    margin:0;
+    color:var(--muted);
+    font-size:14.5px;
+    line-height:1.5;
+    max-width:46ch;
+  }
+
+  main{
+    max-width:640px;
+    margin:0 auto;
+    padding:18px 16px 0;
+  }
+
+  .save-status{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    color:var(--muted);
+    font-size:12.5px;
+    margin:0 0 16px;
+    padding:0 2px;
+  }
+  .save-status .dot{
+    width:6px;height:6px;border-radius:50%;
+    background:var(--success);
+    flex-shrink:0;
+  }
+
+  /* ---------- Account / cloud backup ---------- */
+  .auth-actions{
+    display:flex;
+    gap:10px;
+    margin-top:16px;
+  }
+  .auth-actions .btn-secondary,
+  .auth-actions .btn-primary{margin-bottom:0;}
+  .account-email{
+    font-size:14.5px;
+    font-weight:600;
+    color:var(--ivory);
+    margin:0 0 4px;
+  }
+  .sync-status{
+    font-size:12.5px;
+    color:var(--muted);
+    margin:0 0 14px;
+  }
+  .sync-status.ok{color:var(--success);}
+  .sync-status.err{color:var(--danger);}
+
+  /* ---------- Saved sheets list ---------- */
+  .saved-item{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:12px 4px;
+    border-bottom:1px solid var(--border);
+  }
+  .saved-item:last-child{border-bottom:none;}
+  .saved-thumb{
+    width:46px;height:46px;
+    border-radius:9px;
+    background:var(--surface-2);
+    border:1px solid var(--border);
+    overflow:hidden;
+    flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+    color:var(--muted);
+    font-size:16px;
+  }
+  .saved-thumb img{width:100%;height:100%;object-fit:cover;}
+  .saved-info{flex:1;min-width:0;}
+  .saved-info .n{
+    font-size:14.5px;
+    font-weight:600;
+    color:var(--ivory);
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .saved-info .m{
+    font-size:12px;
+    color:var(--muted);
+    margin-top:2px;
+  }
+  .saved-actions{display:flex;gap:6px;flex-shrink:0;}
+  .saved-actions button{
+    width:38px;height:38px;
+    border-radius:9px;
+    font-size:15px;
+    border:1px solid var(--border);
+    background:var(--surface-2);
+    color:var(--gold-soft);
+  }
+  .saved-actions button.del{color:var(--danger);}
+
+  .backup-row{
+    display:flex;
+    gap:10px;
+    margin-top:14px;
+    padding-top:14px;
+    border-top:1px solid var(--border);
+  }
+  .btn-backup{
+    flex:1;
+    background:var(--surface-2);
+    border:1px solid var(--border);
+    color:var(--gold-soft);
+    padding:12px;
+    border-radius:var(--radius-field);
+    font-size:13.5px;
+    font-weight:600;
+  }
+
+  /* ---------- Cards ---------- */
+  .card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius-card);
+    padding:20px 18px;
+    margin-bottom:16px;
+  }
+  .card h2{
+    font-family:'Playfair Display',serif;
+    font-weight:600;
+    font-size:19px;
+    margin:0 0 4px;
+    color:var(--ivory);
+  }
+  .card .card-hint{
+    color:var(--muted);
+    font-size:13px;
+    margin:0 0 16px;
+    line-height:1.4;
+  }
+
+  label{
+    display:block;
+    font-size:12.5px;
+    color:var(--muted);
+    margin:0 0 6px;
+  }
+
+  input[type=text],
+  input[type=number]{
+    width:100%;
+    background:var(--surface-2);
+    border:1px solid var(--border);
+    border-radius:var(--radius-field);
+    color:var(--ivory);
+    font-family:'Inter',sans-serif;
+    font-size:15.5px;
+    padding:12px 13px;
+    outline:none;
+    transition:border-color .15s ease;
+  }
+  input[type=text]:focus,
+  input[type=number]:focus{
+    border-color:var(--gold);
+  }
+  input::placeholder{color:#6b5f4c;}
+
+  textarea{
+    width:100%;
+    background:var(--surface-2);
+    border:1px solid var(--border);
+    border-radius:var(--radius-field);
+    color:var(--ivory);
+    font-family:'Inter',sans-serif;
+    font-size:14.5px;
+    padding:12px 13px;
+    outline:none;
+    resize:vertical;
+    line-height:1.5;
+    transition:border-color .15s ease;
+  }
+  textarea:focus{border-color:var(--gold);}
+  textarea::placeholder{color:#6b5f4c;}
+
+  /* ---------- Article info ---------- */
+  .photo-row{
+    display:flex;
+    gap:14px;
+    align-items:center;
+    margin-top:14px;
+  }
+  .photo-frame{
+    width:76px;
+    height:76px;
+    border-radius:12px;
+    border:1.5px dashed var(--border);
+    background:var(--surface-2);
+    flex-shrink:0;
+    overflow:hidden;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .photo-frame img{
+    width:100%;height:100%;object-fit:cover;
+  }
+  .photo-frame .plus{
+    color:var(--gold);
+    font-size:26px;
+    font-weight:300;
+  }
+  .btn-photo{
+    flex:1;
+    background:var(--surface-2);
+    border:1px solid var(--border);
+    color:var(--gold-soft);
+    padding:13px 14px;
+    border-radius:var(--radius-field);
+    font-size:14.5px;
+    font-weight:600;
+    text-align:left;
+  }
+  .btn-photo span.small{
+    display:block;
+    color:var(--muted);
+    font-weight:400;
+    font-size:12px;
+    margin-top:2px;
+  }
+
+  /* ---------- Expense rows ---------- */
+  .expense-row{
+    display:grid;
+    grid-template-columns:1fr 108px 40px;
+    gap:8px;
+    align-items:center;
+    margin-bottom:10px;
+  }
+  .expense-row input[type=number]{text-align:right;}
+  .row-del{
+    width:40px;
+    height:44px;
+    border-radius:var(--radius-field);
+    background:var(--danger-soft);
+    color:var(--danger);
+    border:1px solid #4a2a20;
+    font-size:18px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .empty-note{
+    color:var(--muted);
+    font-size:13.5px;
+    padding:10px 2px 14px;
+  }
+
+  .btn-add{
+    width:100%;
+    background:transparent;
+    border:1.5px dashed var(--gold);
+    color:var(--gold-soft);
+    padding:13px;
+    border-radius:var(--radius-field);
+    font-size:14.5px;
+    font-weight:600;
+    margin-top:4px;
+  }
+
+  .total-strip{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    margin-top:18px;
+    padding-top:16px;
+    border-top:1px solid var(--border);
+  }
+  .total-strip .label{
+    color:var(--muted);
+    font-size:14px;
+  }
+  .total-strip .value{
+    font-family:'Playfair Display',serif;
+    font-size:24px;
+    font-weight:700;
+    color:var(--gold-soft);
+  }
+
+  /* ---------- Margin tiers ---------- */
+  .tier{
+    background:var(--surface-2);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:16px;
+    margin-bottom:12px;
+  }
+  .tier:last-child{margin-bottom:0;}
+  .tier-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    margin-bottom:12px;
+    gap:10px;
+  }
+  .tier-head .en{
+    font-size:15px;
+    font-weight:600;
+    color:var(--ivory);
+  }
+  .tier-head .urdu{
+    font-size:16px;
+    color:var(--gold);
+  }
+  .tier-grid{
+    display:grid;
+    grid-template-columns:88px 1fr;
+    gap:10px;
+    margin-bottom:12px;
+  }
+  .tier-out{
+    display:flex;
+    justify-content:space-between;
+    padding-top:10px;
+    border-top:1px solid var(--border);
+    font-size:13.5px;
+  }
+  .tier-out + .tier-out{padding-top:6px;border-top:none;}
+  .tier-out .k{color:var(--muted);}
+  .tier-out .v{font-weight:600;color:var(--ivory);}
+  .tier-final{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    margin-top:10px;
+    padding-top:10px;
+    border-top:1px solid var(--border);
+  }
+  .tier-final .k{font-size:13.5px;color:var(--muted);}
+  .tier-final .v{
+    font-family:'Playfair Display',serif;
+    font-size:20px;
+    font-weight:700;
+    color:var(--gold-soft);
+  }
+
+  /* ---------- Action buttons ---------- */
+  .actions{margin:6px 0 24px;}
+  .btn-primary{
+    width:100%;
+    background:linear-gradient(135deg, var(--gold-soft), var(--gold) 55%, #a97f2e);
+    color:#1a1408;
+    border:none;
+    padding:16px;
+    border-radius:var(--radius-field);
+    font-size:16px;
+    font-weight:700;
+    font-family:'Inter',sans-serif;
+    margin-bottom:10px;
+  }
+  .btn-primary:disabled{opacity:.6;}
+  .btn-secondary{
+    width:100%;
+    background:transparent;
+    border:1px solid var(--border);
+    color:var(--muted);
+    padding:14px;
+    border-radius:var(--radius-field);
+    font-size:14.5px;
+    font-weight:600;
+    margin-bottom:10px;
+  }
+  .btn-danger-outline{
+    width:100%;
+    background:transparent;
+    border:1px solid #4a2a20;
+    color:var(--danger);
+    padding:14px;
+    border-radius:var(--radius-field);
+    font-size:14.5px;
+    font-weight:600;
+  }
+
+  /* ---------- Summary sheet ---------- */
+  #summarySection{display:none;}
+  .sheet{
+    background:
+      radial-gradient(120% 100% at 100% 0%, rgba(201,162,75,.20), transparent 55%),
+      linear-gradient(160deg, #241d13 0%, #2c2313 45%, #1a1610 100%);
+    border:1px solid var(--gold);
+    border-radius:var(--radius-card);
+    padding:22px 18px;
+    margin-bottom:20px;
+  }
+  .sheet-head{
+    display:flex;
+    gap:14px;
+    align-items:center;
+    padding-bottom:16px;
+    margin-bottom:16px;
+    border-bottom:1px solid var(--border);
+  }
+  .sheet-photo{
+    width:64px;height:64px;
+    border-radius:10px;
+    overflow:hidden;
+    background:var(--surface-2);
+    flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .sheet-photo img{width:100%;height:100%;object-fit:cover;}
+  .sheet-title .name{
+    font-family:'Playfair Display',serif;
+    font-size:18px;
+    font-weight:700;
+    color:var(--ivory);
+  }
+  .sheet-title .date{
+    font-size:12.5px;
+    color:var(--muted);
+    margin-top:3px;
+  }
+  .sheet-desc{
+    color:var(--muted);
+    font-size:13.5px;
+    line-height:1.55;
+    margin:0 0 18px;
+  }
+  .sheet h3{
+    font-size:13px;
+    text-transform:none;
+    color:var(--gold-soft);
+    margin:0 0 10px;
+    font-weight:600;
+  }
+  table{
+    width:100%;
+    border-collapse:collapse;
+    margin-bottom:18px;
+    font-size:14px;
+  }
+  table td, table th{
+    padding:9px 4px;
+    border-bottom:1px solid var(--border);
+    text-align:left;
+  }
+  table th{
+    color:var(--muted);
+    font-weight:600;
+    font-size:12.5px;
+  }
+  table td.num, table th.num{text-align:right;}
+  table tr.total-row td{
+    border-bottom:none;
+    border-top:1.5px solid var(--gold);
+    padding-top:12px;
+    font-weight:700;
+    color:var(--gold-soft);
+  }
+  .pricing-table td.tier-name .urdu{
+    display:block;
+    font-size:13.5px;
+    color:var(--muted);
+    margin-top:1px;
+  }
+  .pricing-table tr.highlight td{
+    color:var(--gold-soft);
+    font-weight:700;
+  }
+
+  footer.brand{
+    text-align:center;
+    color:var(--muted);
+    font-size:11.5px;
+    letter-spacing:.03em;
+    margin-top:4px;
+  }
+
+  /* ---------- Print ---------- */
+  @media print{
+    body *{visibility:hidden;}
+    #summarySection, #summarySection *{visibility:visible;}
+    #summarySection{display:block;position:absolute;top:0;left:0;width:100%;padding:0;}
+    .sheet{border:none;padding:0;background:#fff;}
+    .no-print{display:none !important;}
+    body{background:#fff;color:#111;padding:0;}
+    .sheet-title .name, h3, table th, table td, .tier-out .v{color:#111 !important;}
+    table td, table th{border-bottom:1px solid #ccc;}
+    table tr.total-row td{border-top:1.5px solid #b8860b;color:#8a6a1f !important;}
+  }
+
+  @media (min-width:480px){
+    .expense-row{grid-template-columns:1fr 120px 40px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <p class="kicker">Costing Studio</p>
+  <h1>Jewelry Costing &amp; Pricing Calculator</h1>
+  <p class="sub">Build up the real cost of a set, then generate wholesale, standard and retail prices in one tap.</p>
+</header>
+
+<main>
+
+  <p class="save-status"><span class="dot"></span><span id="saveStatusText">Changes save automatically on this device</span></p>
+
+  <!-- Account / Cloud Backup -->
+  <section class="card" id="accountCard">
+    <h2>Cloud Backup</h2>
+    <p class="card-hint" id="accountHint">Sign in once to automatically back up your data — open the app on another phone and log in to restore it.</p>
+
+    <div id="authForm">
+      <label for="authEmail">Email</label>
+      <input type="email" id="authEmail" placeholder="you@example.com" autocomplete="email">
+      <label for="authPassword" style="margin-top:12px;">Password</label>
+      <input type="password" id="authPassword" placeholder="At least 6 characters" autocomplete="current-password">
+      <div class="auth-actions">
+        <button class="btn-secondary" id="signUpBtn" type="button">Sign Up</button>
+        <button class="btn-primary" id="logInBtn" type="button">Log In</button>
+      </div>
+    </div>
+
+    <div id="accountInfo" style="display:none;">
+      <p class="account-email" id="accountEmail"></p>
+      <p class="sync-status" id="syncStatus">—</p>
+      <button class="btn-secondary" id="logOutBtn" type="button">Log Out</button>
+    </div>
+  </section>
+
+  <!-- Saved Cost Sheets -->
+  <section class="card">
+    <h2>Saved Cost Sheets</h2>
+    <p class="card-hint">Sheets you've saved on this device. Tap open to load one back into the form.</p>
+    <div id="savedList"></div>
+    <p class="empty-note" id="savedEmptyNote">No saved cost sheets yet — build one below, then tap "Save to My Cost Sheets".</p>
+    <div class="backup-row">
+      <button class="btn-backup" id="exportBtn" type="button">Export Backup</button>
+      <button class="btn-backup" id="importBtn" type="button">Import Backup</button>
+      <input type="file" id="importInput" accept="application/json,.json" style="display:none;">
+    </div>
+    <p class="card-hint" style="margin:10px 0 0;">To move your data to another phone: tap Export here, send that file to the other phone (WhatsApp, email, etc.), then open it there and tap Import.</p>
+  </section>
+
+  <!-- Article Info -->
+  <section class="card">
+    <h2>Article Details</h2>
+    <p class="card-hint">Name or code the buyer will recognize on the invoice.</p>
+    <label for="articleName">Product / Article Name or Code</label>
+    <input type="text" id="articleName" placeholder="e.g. Bridal Necklace Set – BN204">
+    <label for="articleDesc" style="margin-top:14px;">Description / Notes</label>
+    <textarea id="articleDesc" placeholder="e.g. 22K gold plated, kundan work, matching earrings included" rows="3"></textarea>
+    <div class="photo-row">
+      <div class="photo-frame" id="photoFrame"><span class="plus">+</span></div>
+      <button class="btn-photo" id="photoTrigger" type="button">
+        Add product photo
+        <span class="small">Choose from gallery or camera</span>
+      </button>
+      <input type="file" id="photoInput" accept="image/*" style="display:none;">
+    </div>
+  </section>
+
+  <!-- Expenses -->
+  <section class="card">
+    <h2>Production Expenses</h2>
+    <p class="card-hint">Add every cost that went into making this set — gold, stones, making charges, polish, packaging, anything.</p>
+    <div id="expenseList"></div>
+    <p class="empty-note" id="emptyNote">No expenses added yet. Tap below to add your first one.</p>
+    <button class="btn-add" id="addExpenseBtn" type="button">+ Add New Expense</button>
+    <div class="total-strip">
+      <span class="label">Total Production Cost</span>
+      <span class="value">Rs. <span id="totalCost">0</span></span>
+    </div>
+  </section>
+
+  <!-- Margins -->
+  <section class="card">
+    <h2>Pricing Tiers</h2>
+    <p class="card-hint">Set a margin for each tier — the profit and final price update as you type.</p>
+
+    <div class="tier" data-tier="wholesale">
+      <div class="tier-head">
+        <span class="en">Wholesale Rate</span>
+        <span class="urdu">تھوک ریٹ</span>
+      </div>
+      <div class="tier-grid">
+        <div><label>Margin %</label><input type="number" inputmode="decimal" class="margin-input" placeholder="0" min="0"></div>
+        <div style="align-self:end;color:var(--muted);font-size:12.5px;padding-bottom:12px;">of total cost</div>
+      </div>
+      <div class="tier-out"><span class="k">Profit Amount</span><span class="v profit-out">Rs. 0</span></div>
+      <div class="tier-final"><span class="k">Selling Price / Set</span><span class="v price-out">Rs. 0</span></div>
+    </div>
+
+    <div class="tier" data-tier="standard">
+      <div class="tier-head">
+        <span class="en">Standard Rate</span>
+        <span class="urdu">مناسب ریٹ</span>
+      </div>
+      <div class="tier-grid">
+        <div><label>Margin %</label><input type="number" inputmode="decimal" class="margin-input" placeholder="0" min="0"></div>
+        <div style="align-self:end;color:var(--muted);font-size:12.5px;padding-bottom:12px;">of total cost</div>
+      </div>
+      <div class="tier-out"><span class="k">Profit Amount</span><span class="v profit-out">Rs. 0</span></div>
+      <div class="tier-final"><span class="k">Selling Price / Set</span><span class="v price-out">Rs. 0</span></div>
+    </div>
+
+    <div class="tier" data-tier="retail">
+      <div class="tier-head">
+        <span class="en">Retail Rate</span>
+        <span class="urdu">ریٹیل ریٹ</span>
+      </div>
+      <div class="tier-grid">
+        <div><label>Margin %</label><input type="number" inputmode="decimal" class="margin-input" placeholder="0" min="0"></div>
+        <div style="align-self:end;color:var(--muted);font-size:12.5px;padding-bottom:12px;">of total cost</div>
+      </div>
+      <div class="tier-out"><span class="k">Profit Amount</span><span class="v profit-out">Rs. 0</span></div>
+      <div class="tier-final"><span class="k">Selling Price / Set</span><span class="v price-out">Rs. 0</span></div>
+    </div>
+  </section>
+
+  <div class="actions">
+    <button class="btn-primary" id="generateBtn" type="button">Generate Cost Sheet</button>
+    <button class="btn-secondary no-print" id="clearBtn" type="button">Clear / Reset All</button>
+  </div>
+
+  <!-- Summary / Cost Sheet -->
+  <section id="summarySection">
+    <div class="sheet" id="sheetEl">
+      <div class="sheet-head">
+        <div class="sheet-photo" id="sheetPhoto"></div>
+        <div class="sheet-title">
+          <div class="name" id="sheetName">Untitled Article</div>
+          <div class="date" id="sheetDate"></div>
+        </div>
+      </div>
+
+      <p class="sheet-desc" id="sheetDesc" style="display:none;"></p>
+
+      <h3>Itemized Expenses</h3>
+      <table>
+        <thead><tr><th>Expense</th><th class="num">Amount (Rs.)</th></tr></thead>
+        <tbody id="sheetExpenseBody"></tbody>
+        <tbody>
+          <tr class="total-row"><td>Total Cost</td><td class="num" id="sheetTotal">0</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Pricing Breakdown</h3>
+      <table class="pricing-table">
+        <thead><tr><th>Tier</th><th class="num">Margin</th><th class="num">Profit</th><th class="num">Price</th></tr></thead>
+        <tbody id="sheetPricingBody"></tbody>
+      </table>
+
+      <footer class="brand">Prepared with Costing Studio</footer>
+    </div>
+
+    <button class="btn-primary no-print" id="shareBtn" type="button">Share as PDF</button>
+    <button class="btn-secondary no-print" id="saveSheetBtn" type="button">Save to My Cost Sheets</button>
+    <button class="btn-secondary no-print" id="printBtn" type="button">Print / Save Copy</button>
+  </section>
+
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+(function(){
+  // ---------- State ----------
+  let expenses = [];      // {id, name, amount}
+  let expenseSeq = 0;
+  let photoDataUrl = null;
+  let savedSheets = [];   // list of previously saved cost sheets
+  const STORAGE_KEY = 'costingStudioDraft_v1';
+  const SAVED_KEY = 'costingStudioSavedSheets_v1';
+
+  // ---------- Elements ----------
+  const expenseList   = document.getElementById('expenseList');
+  const emptyNote      = document.getElementById('emptyNote');
+  const addExpenseBtn  = document.getElementById('addExpenseBtn');
+  const totalCostEl    = document.getElementById('totalCost');
+  const articleNameEl  = document.getElementById('articleName');
+  const articleDescEl  = document.getElementById('articleDesc');
+  const photoInput     = document.getElementById('photoInput');
+  const photoTrigger   = document.getElementById('photoTrigger');
+  const photoFrame     = document.getElementById('photoFrame');
+  const generateBtn    = document.getElementById('generateBtn');
+  const clearBtn       = document.getElementById('clearBtn');
+  const shareBtn       = document.getElementById('shareBtn');
+  const saveSheetBtn   = document.getElementById('saveSheetBtn');
+  const printBtn       = document.getElementById('printBtn');
+  const summarySection = document.getElementById('summarySection');
+  const sheetEl         = document.getElementById('sheetEl');
+  const saveStatusText  = document.getElementById('saveStatusText');
+  const savedListEl     = document.getElementById('savedList');
+  const savedEmptyNote  = document.getElementById('savedEmptyNote');
+  const exportBtn       = document.getElementById('exportBtn');
+  const importBtn       = document.getElementById('importBtn');
+  const importInput     = document.getElementById('importInput');
+  const authForm        = document.getElementById('authForm');
+  const authEmail       = document.getElementById('authEmail');
+  const authPassword    = document.getElementById('authPassword');
+  const signUpBtn       = document.getElementById('signUpBtn');
+  const logInBtn        = document.getElementById('logInBtn');
+  const logOutBtn       = document.getElementById('logOutBtn');
+  const accountInfo     = document.getElementById('accountInfo');
+  const accountEmail    = document.getElementById('accountEmail');
+  const syncStatus      = document.getElementById('syncStatus');
+
+  // ---------- Firebase (cloud backup) ----------
+  const firebaseConfig = {
+    apiKey: "AIzaSyBXhMIKa6P3HWAnwStk3PCkK_-Z4qGhJ3s",
+    authDomain: "pro-bug-caculator.firebaseapp.com",
+    projectId: "pro-bug-caculator",
+    storageBucket: "pro-bug-caculator.firebasestorage.app",
+    messagingSenderId: "553337798458",
+    appId: "1:553337798458:web:7968682d3dae01b44e5a03"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+  let currentUser = null;
+  let cloudDraftTimer = null;
+
+  function friendlyAuthError(err){
+    const map = {
+      'auth/email-already-in-use': 'This email is already registered — try Log In instead.',
+      'auth/invalid-email': 'Please enter a valid email address.',
+      'auth/weak-password': 'Password should be at least 6 characters.',
+      'auth/wrong-password': 'Incorrect password.',
+      'auth/user-not-found': 'No account found with this email — try Sign Up instead.',
+      'auth/invalid-credential': 'Incorrect email or password.',
+      'auth/too-many-requests': 'Too many attempts — please wait a moment and try again.',
+      'auth/network-request-failed': 'Network error — check your internet connection.'
+    };
+    return map[err.code] || (err.message || 'Something went wrong. Please try again.');
+  }
+
+  signUpBtn.addEventListener('click', async () => {
+    const email = authEmail.value.trim();
+    const pass = authPassword.value;
+    if (!email || pass.length < 6){ alert('Enter a valid email and a password with at least 6 characters.'); return; }
+    signUpBtn.disabled = true;
+    try{
+      await auth.createUserWithEmailAndPassword(email, pass);
+    }catch(err){
+      alert(friendlyAuthError(err));
+    }finally{
+      signUpBtn.disabled = false;
+    }
+  });
+
+  logInBtn.addEventListener('click', async () => {
+    const email = authEmail.value.trim();
+    const pass = authPassword.value;
+    if (!email || !pass){ alert('Enter your email and password.'); return; }
+    logInBtn.disabled = true;
+    try{
+      await auth.signInWithEmailAndPassword(email, pass);
+    }catch(err){
+      alert(friendlyAuthError(err));
+    }finally{
+      logInBtn.disabled = false;
+    }
+  });
+
+  logOutBtn.addEventListener('click', async () => {
+    await auth.signOut();
+    syncStatus.textContent = '—';
+  });
+
+  auth.onAuthStateChanged(async (user) => {
+    currentUser = user;
+    if (user){
+      authForm.style.display = 'none';
+      accountInfo.style.display = 'block';
+      accountEmail.textContent = 'Logged in as ' + user.email;
+      authPassword.value = '';
+      syncStatus.textContent = 'Checking for cloud backup…';
+      await maybeOfferRestore(user);
+    } else {
+      authForm.style.display = 'block';
+      accountInfo.style.display = 'none';
+    }
+  });
+
+  async function maybeOfferRestore(user){
+    try{
+      const draftRef = db.collection('users').doc(user.uid).collection('draft').doc('current');
+      const sheetsRef = db.collection('users').doc(user.uid).collection('sheets');
+      const [draftSnap, sheetsSnap] = await Promise.all([draftRef.get(), sheetsRef.get()]);
+      const hasCloudData = draftSnap.exists || !sheetsSnap.empty;
+
+      if (hasCloudData){
+        const ok = confirm('Cloud backup mila hai is account ka. Kya aap isay is device pe restore karna chahte hain? (Is device ka maujooda data cloud wale se replace ho jayega)');
+        if (ok){
+          if (draftSnap.exists){
+            const d = draftSnap.data();
+            articleNameEl.value = d.articleName || '';
+            articleDescEl.value = d.articleDesc || '';
+            expenses = Array.isArray(d.expenses) ? d.expenses : [];
+            expenseSeq = d.expenseSeq || expenses.length;
+            photoDataUrl = d.photoDataUrl || null;
+            photoFrame.innerHTML = photoDataUrl ? `<img src="${photoDataUrl}" alt="Product photo">` : '<span class="plus">+</span>';
+            if (Array.isArray(d.margins)) tierEls.forEach((t,i) => { t.input.value = d.margins[i] || ''; });
+            renderExpenses();
+            recalcAll();
+          }
+          savedSheets = sheetsSnap.docs.map(doc => doc.data());
+          savedSheets.sort((a,b) => (b.savedAt || '').localeCompare(a.savedAt || ''));
+          persistSavedSheets();
+          renderSavedList();
+          saveDraft();
+          syncStatus.textContent = 'Restored from cloud backup ✓';
+        } else {
+          syncStatus.textContent = 'Auto-backup active for this device.';
+        }
+      } else {
+        syncStatus.textContent = 'Auto-backup active.';
+      }
+    }catch(err){
+      console.error(err);
+      syncStatus.textContent = 'Could not check cloud backup (offline?).';
+    }
+  }
+
+  function syncDraftToCloud(data){
+    if (!currentUser) return;
+    clearTimeout(cloudDraftTimer);
+    cloudDraftTimer = setTimeout(async () => {
+      try{
+        syncStatus.textContent = 'Backing up…';
+        await db.collection('users').doc(currentUser.uid).collection('draft').doc('current')
+          .set(Object.assign({}, data, {updatedAt: new Date().toISOString()}));
+        syncStatus.textContent = 'Backed up to cloud ✓';
+      }catch(err){
+        console.error(err);
+        syncStatus.textContent = 'Cloud backup failed — will retry on next change.';
+      }
+    }, 900);
+  }
+
+  async function syncSheetToCloud(entry){
+    if (!currentUser) return;
+    try{
+      await db.collection('users').doc(currentUser.uid).collection('sheets').doc(String(entry.id)).set(entry);
+    }catch(err){
+      console.error(err);
+    }
+  }
+
+  async function deleteSheetFromCloud(id){
+    if (!currentUser) return;
+    try{
+      await db.collection('users').doc(currentUser.uid).collection('sheets').doc(String(id)).delete();
+    }catch(err){
+      console.error(err);
+    }
+  }
+
+  const tierEls = Array.from(document.querySelectorAll('.tier')).map(el => ({
+    key: el.dataset.tier,
+    labelEn: el.querySelector('.tier-head .en').textContent.trim(),
+    labelUr: el.querySelector('.tier-head .urdu').textContent.trim(),
+    input: el.querySelector('.margin-input'),
+    profitOut: el.querySelector('.profit-out'),
+    priceOut: el.querySelector('.price-out')
+  }));
+
+  // ---------- Helpers ----------
+  function fmt(n){
+    if (!isFinite(n)) n = 0;
+    return n.toLocaleString('en-PK', {maximumFractionDigits:2, minimumFractionDigits:0});
+  }
+
+  function getTotalCost(){
+    return expenses.reduce((sum, e) => sum + (parseFloat(e.amount) || 0), 0);
+  }
+
+  // ---------- Local save / restore ----------
+  let saveTimer = null;
+  function saveDraft(){
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => {
+      try{
+        const data = {
+          articleName: articleNameEl.value,
+          articleDesc: articleDescEl.value,
+          expenses: expenses,
+          expenseSeq: expenseSeq,
+          photoDataUrl: photoDataUrl,
+          margins: tierEls.map(t => t.input.value)
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        saveStatusText.textContent = 'Saved on this device';
+        syncDraftToCloud(data);
+      }catch(err){
+        saveStatusText.textContent = 'Could not save (storage full)';
+      }
+    }, 250);
+  }
+
+  function loadDraft(){
+    let raw;
+    try{ raw = localStorage.getItem(STORAGE_KEY); }catch(err){ return; }
+    if (!raw) return;
+    let data;
+    try{ data = JSON.parse(raw); }catch(err){ return; }
+    if (!data) return;
+
+    articleNameEl.value = data.articleName || '';
+    articleDescEl.value = data.articleDesc || '';
+    expenses = Array.isArray(data.expenses) ? data.expenses : [];
+    expenseSeq = data.expenseSeq || expenses.length;
+    photoDataUrl = data.photoDataUrl || null;
+    if (photoDataUrl) photoFrame.innerHTML = `<img src="${photoDataUrl}" alt="Product photo">`;
+    if (Array.isArray(data.margins)){
+      tierEls.forEach((t, i) => { t.input.value = data.margins[i] || ''; });
+    }
+    renderExpenses();
+  }
+
+  // ---------- Saved Cost Sheets (named, reopenable list) ----------
+  function loadSavedSheets(){
+    let raw;
+    try{ raw = localStorage.getItem(SAVED_KEY); }catch(err){ return; }
+    if (!raw) return;
+    try{ savedSheets = JSON.parse(raw) || []; }catch(err){ savedSheets = []; }
+  }
+
+  function persistSavedSheets(){
+    try{
+      localStorage.setItem(SAVED_KEY, JSON.stringify(savedSheets));
+      return 'ok';
+    }catch(err){
+      return 'fail';
+    }
+  }
+
+  function renderSavedList(){
+    savedListEl.innerHTML = '';
+    savedEmptyNote.style.display = savedSheets.length ? 'none' : 'block';
+
+    savedSheets.forEach(sheet => {
+      const row = document.createElement('div');
+      row.className = 'saved-item';
+      const dateLabel = new Date(sheet.savedAt).toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'});
+      row.innerHTML = `
+        <div class="saved-thumb">${sheet.photoDataUrl ? `<img src="${sheet.photoDataUrl}" alt="">` : '◇'}</div>
+        <div class="saved-info">
+          <div class="n">${(sheet.articleName || 'Untitled Article').replace(/</g,'&lt;')}</div>
+          <div class="m">${dateLabel} · Rs. ${fmt(sheet.total || 0)}</div>
+        </div>
+        <div class="saved-actions">
+          <button type="button" class="open" aria-label="Open" data-id="${sheet.id}">↗</button>
+          <button type="button" class="del" aria-label="Delete" data-id="${sheet.id}">&times;</button>
+        </div>
+      `;
+      savedListEl.appendChild(row);
+    });
+  }
+
+  savedListEl.addEventListener('click', function(e){
+    const openBtn = e.target.closest('.open');
+    const delBtn = e.target.closest('.del');
+    if (openBtn) openSavedSheet(Number(openBtn.dataset.id));
+    if (delBtn) deleteSavedSheet(Number(delBtn.dataset.id));
+  });
+
+  function saveCurrentSheet(){
+    const total = getTotalCost();
+    const entry = {
+      id: Date.now(),
+      articleName: articleNameEl.value.trim(),
+      articleDesc: articleDescEl.value,
+      expenses: JSON.parse(JSON.stringify(expenses)),
+      margins: tierEls.map(t => t.input.value),
+      photoDataUrl: photoDataUrl,
+      total: total,
+      savedAt: new Date().toISOString()
+    };
+    savedSheets.unshift(entry);
+    let result = persistSavedSheets();
+
+    if (result === 'fail' && entry.photoDataUrl){
+      // storage full — retry without the photo so the numbers/data still get saved
+      savedSheets[0] = { ...entry, photoDataUrl: null };
+      result = persistSavedSheets();
+      if (result === 'ok'){
+        renderSavedList();
+        syncSheetToCloud(savedSheets[0]);
+        alert('Saved, but storage is nearly full so the photo was left out of this saved copy. Delete an older saved sheet to free up space for photos.');
+        return;
+      }
+    }
+
+    if (result === 'ok'){
+      renderSavedList();
+      syncSheetToCloud(entry);
+      const original = saveSheetBtn.textContent;
+      saveSheetBtn.textContent = 'Saved ✓';
+      setTimeout(() => { saveSheetBtn.textContent = original; }, 1400);
+    } else {
+      savedSheets.shift();
+      alert('Could not save — device storage is full. Please delete an older saved cost sheet and try again.');
+    }
+  }
+
+  function openSavedSheet(id){
+    const sheet = savedSheets.find(s => s.id === id);
+    if (!sheet) return;
+    articleNameEl.value = sheet.articleName || '';
+    articleDescEl.value = sheet.articleDesc || '';
+    expenses = JSON.parse(JSON.stringify(sheet.expenses || []));
+    expenseSeq = expenses.reduce((max, e) => Math.max(max, e.id || 0), 0);
+    photoDataUrl = sheet.photoDataUrl || null;
+    photoFrame.innerHTML = photoDataUrl ? `<img src="${photoDataUrl}" alt="Product photo">` : '<span class="plus">+</span>';
+    tierEls.forEach((t, i) => { t.input.value = (sheet.margins && sheet.margins[i]) || ''; });
+    renderExpenses();
+    recalcAll();
+    saveDraft();
+    generateSheet();
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  function deleteSavedSheet(id){
+    if (!confirm('Delete this saved cost sheet? This cannot be undone.')) return;
+    savedSheets = savedSheets.filter(s => s.id !== id);
+    persistSavedSheets();
+    renderSavedList();
+    deleteSheetFromCloud(id);
+  }
+
+  saveSheetBtn.addEventListener('click', saveCurrentSheet);
+
+  // ---------- Backup / Restore (move data between devices, WhatsApp-style) ----------
+  async function exportBackup(){
+    const originalLabel = exportBtn.textContent;
+    exportBtn.disabled = true;
+    exportBtn.textContent = 'Preparing…';
+    try{
+      const backup = {
+        type: 'costing-studio-backup',
+        version: 1,
+        exportedAt: new Date().toISOString(),
+        draft: {
+          articleName: articleNameEl.value,
+          articleDesc: articleDescEl.value,
+          expenses: expenses,
+          expenseSeq: expenseSeq,
+          photoDataUrl: photoDataUrl,
+          margins: tierEls.map(t => t.input.value)
+        },
+        savedSheets: savedSheets
+      };
+      const json = JSON.stringify(backup);
+      const blob = new Blob([json], {type:'application/json'});
+      const fileName = 'costing-studio-backup-' + new Date().toISOString().slice(0,10) + '.json';
+      const file = new File([blob], fileName, {type:'application/json'});
+
+      if (navigator.canShare && navigator.canShare({files:[file]})){
+        await navigator.share({ files:[file], title:'Costing Studio Backup' });
+      } else {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = fileName;
+        document.body.appendChild(a); a.click(); a.remove();
+        URL.revokeObjectURL(url);
+        alert('Backup file downloaded. Send it to your other phone (WhatsApp, email, etc.) and open Import there.');
+      }
+    } catch(err){
+      if (!err || err.name !== 'AbortError'){
+        console.error(err);
+        alert('Could not create the backup file. Please try again.');
+      }
+    } finally {
+      exportBtn.disabled = false;
+      exportBtn.textContent = originalLabel;
+    }
+  }
+
+  function importBackup(){
+    importInput.value = '';
+    importInput.click();
+  }
+
+  importInput.addEventListener('change', function(){
+    const file = importInput.files && importInput.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e){
+      let backup;
+      try{ backup = JSON.parse(e.target.result); }catch(err){
+        alert('This file is not a valid backup.'); return;
+      }
+      if (!backup || backup.type !== 'costing-studio-backup'){
+        alert('This file is not a valid Costing Studio backup.'); return;
+      }
+
+      const incoming = Array.isArray(backup.savedSheets) ? backup.savedSheets : [];
+      const existingIds = new Set(savedSheets.map(s => s.id));
+      let addedCount = 0;
+      incoming.forEach(sheet => {
+        if (!existingIds.has(sheet.id)){
+          savedSheets.push(sheet);
+          existingIds.add(sheet.id);
+          addedCount++;
+        }
+      });
+      savedSheets.sort((a,b) => (b.savedAt || '').localeCompare(a.savedAt || ''));
+      const result = persistSavedSheets();
+      renderSavedList();
+
+      let msg = addedCount + ' saved cost sheet(s) imported.';
+      if (result === 'fail'){
+        msg = 'Some sheets were imported, but storage is full — delete an older saved sheet to make room for the rest.';
+      }
+
+      if (backup.draft && confirm(msg + '\n\nAlso load the in-progress form from this backup? (This will replace what you\'re currently editing.)')){
+        articleNameEl.value = backup.draft.articleName || '';
+        articleDescEl.value = backup.draft.articleDesc || '';
+        expenses = Array.isArray(backup.draft.expenses) ? backup.draft.expenses : [];
+        expenseSeq = backup.draft.expenseSeq || expenses.length;
+        photoDataUrl = backup.draft.photoDataUrl || null;
+        photoFrame.innerHTML = photoDataUrl ? `<img src="${photoDataUrl}" alt="Product photo">` : '<span class="plus">+</span>';
+        if (Array.isArray(backup.draft.margins)){
+          tierEls.forEach((t,i) => { t.input.value = backup.draft.margins[i] || ''; });
+        }
+        renderExpenses();
+        recalcAll();
+        saveDraft();
+      } else {
+        alert(msg);
+      }
+    };
+    reader.readAsText(file);
+  });
+
+  exportBtn.addEventListener('click', exportBackup);
+  importBtn.addEventListener('click', importBackup);
+
+  // ---------- Expense rows ----------
+  function renderExpenses(){
+    expenseList.innerHTML = '';
+    emptyNote.style.display = expenses.length ? 'none' : 'block';
+
+    expenses.forEach(exp => {
+      const row = document.createElement('div');
+      row.className = 'expense-row';
+      row.dataset.id = exp.id;
+      row.innerHTML = `
+        <input type="text" class="exp-name" placeholder="Expense name" value="${(exp.name || '').replace(/"/g,'&quot;')}">
+        <input type="number" class="exp-amount" placeholder="0" inputmode="decimal" min="0" value="${exp.amount === '' || exp.amount === undefined ? '' : exp.amount}">
+        <button type="button" class="row-del" aria-label="Delete expense">&times;</button>
+      `;
+      expenseList.appendChild(row);
+    });
+  }
+
+  function addExpense(){
+    expenseSeq += 1;
+    expenses.push({id: expenseSeq, name:'', amount:''});
+    renderExpenses();
+    recalcAll();
+    saveDraft();
+    const inputs = expenseList.querySelectorAll('.exp-name');
+    if (inputs.length) inputs[inputs.length - 1].focus();
+  }
+
+  expenseList.addEventListener('input', function(e){
+    const row = e.target.closest('.expense-row');
+    if (!row) return;
+    const id = Number(row.dataset.id);
+    const exp = expenses.find(x => x.id === id);
+    if (!exp) return;
+    if (e.target.classList.contains('exp-name')) exp.name = e.target.value;
+    if (e.target.classList.contains('exp-amount')) exp.amount = e.target.value;
+    recalcAll();
+    saveDraft();
+  });
+
+  expenseList.addEventListener('click', function(e){
+    const btn = e.target.closest('.row-del');
+    if (!btn) return;
+    const row = btn.closest('.expense-row');
+    const id = Number(row.dataset.id);
+    expenses = expenses.filter(x => x.id !== id);
+    renderExpenses();
+    recalcAll();
+    saveDraft();
+  });
+
+  addExpenseBtn.addEventListener('click', addExpense);
+  articleNameEl.addEventListener('input', saveDraft);
+  articleDescEl.addEventListener('input', saveDraft);
+
+  // ---------- Margin tiers ----------
+  function recalcAll(){
+    const total = getTotalCost();
+    totalCostEl.textContent = fmt(total);
+
+    tierEls.forEach(t => {
+      const pct = parseFloat(t.input.value) || 0;
+      const profit = total * (pct / 100);
+      const price = total + profit;
+      t.profitOut.textContent = 'Rs. ' + fmt(profit);
+      t.priceOut.textContent = 'Rs. ' + fmt(price);
+    });
+  }
+
+  tierEls.forEach(t => t.input.addEventListener('input', () => { recalcAll(); saveDraft(); }));
+
+  // ---------- Photo (opens native chooser: gallery, files or camera) ----------
+  function resizeImageFile(file, maxDim, quality){
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = function(e){
+        const img = new Image();
+        img.onload = function(){
+          let { width, height } = img;
+          if (width > height && width > maxDim){
+            height = Math.round(height * (maxDim / width));
+            width = maxDim;
+          } else if (height >= width && height > maxDim){
+            width = Math.round(width * (maxDim / height));
+            height = maxDim;
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          resolve(canvas.toDataURL('image/jpeg', quality));
+        };
+        img.onerror = () => reject(new Error('image load failed'));
+        img.src = e.target.result;
+      };
+      reader.onerror = () => reject(new Error('file read failed'));
+      reader.readAsDataURL(file);
+    });
+  }
+
+  photoTrigger.addEventListener('click', () => photoInput.click());
+  photoFrame.addEventListener('click', () => photoInput.click());
+
+  photoInput.addEventListener('change', function(){
+    const file = photoInput.files && photoInput.files[0];
+    if (!file) return;
+    const originalLabel = photoTrigger.innerHTML;
+    photoTrigger.innerHTML = 'Processing photo…';
+    resizeImageFile(file, 900, 0.72).then(dataUrl => {
+      photoDataUrl = dataUrl;
+      photoFrame.innerHTML = `<img src="${photoDataUrl}" alt="Product photo">`;
+      photoTrigger.innerHTML = originalLabel;
+      saveDraft();
+    }).catch(() => {
+      photoTrigger.innerHTML = originalLabel;
+      alert('Could not process that photo. Please try another one.');
+    });
+  });
+
+  // ---------- Generate cost sheet ----------
+  function generateSheet(){
+    const total = getTotalCost();
+    const name = articleNameEl.value.trim() || 'Untitled Article';
+
+    document.getElementById('sheetName').textContent = name;
+    document.getElementById('sheetDate').textContent = new Date().toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'});
+
+    const descText = articleDescEl.value.trim();
+    const sheetDescEl = document.getElementById('sheetDesc');
+    if (descText){
+      sheetDescEl.textContent = descText;
+      sheetDescEl.style.display = 'block';
+    } else {
+      sheetDescEl.style.display = 'none';
+    }
+
+    const sheetPhoto = document.getElementById('sheetPhoto');
+    sheetPhoto.innerHTML = photoDataUrl ? `<img src="${photoDataUrl}" alt="${name}">` : '';
+
+    const body = document.getElementById('sheetExpenseBody');
+    body.innerHTML = '';
+    if (expenses.length === 0){
+      body.innerHTML = `<tr><td colspan="2" style="color:var(--muted);">No expenses added</td></tr>`;
+    } else {
+      expenses.forEach(e => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${(e.name || 'Untitled item').replace(/</g,'&lt;')}</td><td class="num">${fmt(parseFloat(e.amount) || 0)}</td>`;
+        body.appendChild(tr);
+      });
+    }
+    document.getElementById('sheetTotal').textContent = fmt(total);
+
+    const pricingBody = document.getElementById('sheetPricingBody');
+    pricingBody.innerHTML = '';
+    tierEls.forEach(t => {
+      const pct = parseFloat(t.input.value) || 0;
+      const profit = total * (pct / 100);
+      const price = total + profit;
+      const tr = document.createElement('tr');
+      if (t.key === 'retail') tr.className = 'highlight';
+      tr.innerHTML = `
+        <td class="tier-name">${t.labelEn}<span class="urdu">${t.labelUr}</span></td>
+        <td class="num">${fmt(pct)}%</td>
+        <td class="num">${fmt(profit)}</td>
+        <td class="num">${fmt(price)}</td>
+      `;
+      pricingBody.appendChild(tr);
+    });
+
+    summarySection.style.display = 'block';
+    summarySection.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+
+  generateBtn.addEventListener('click', generateSheet);
+  printBtn.addEventListener('click', () => window.print());
+
+  // ---------- Share as PDF (native Android share sheet, e.g. straight to WhatsApp) ----------
+  async function shareAsPDF(){
+    if (summarySection.style.display === 'none') generateSheet();
+
+    const originalLabel = shareBtn.textContent;
+    shareBtn.disabled = true;
+    shareBtn.textContent = 'Preparing PDF…';
+
+    try{
+      const canvas = await html2canvas(sheetEl, {scale:2, backgroundColor:'#1a1610', useCORS:true});
+      const imgData = canvas.toDataURL('image/jpeg', 0.95);
+
+      const { jsPDF } = window.jspdf;
+      const pageWidth = 595.28; // A4 width in pt
+      const pageHeight = pageWidth * canvas.height / canvas.width;
+      const pdf = new jsPDF({unit:'pt', format:[pageWidth, pageHeight]});
+      pdf.addImage(imgData, 'JPEG', 0, 0, pageWidth, pageHeight);
+      const blob = pdf.output('blob');
+
+      const safeName = (articleNameEl.value.trim() || 'cost-sheet').replace(/[^a-z0-9\-]+/gi, '-');
+      const fileName = safeName + '.pdf';
+      const file = new File([blob], fileName, {type:'application/pdf'});
+
+      if (navigator.canShare && navigator.canShare({files:[file]})){
+        await navigator.share({
+          files:[file],
+          title: 'Cost Sheet',
+          text: 'Cost sheet — ' + (articleNameEl.value.trim() || 'jewelry set')
+        });
+      } else {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = fileName;
+        document.body.appendChild(a); a.click(); a.remove();
+        URL.revokeObjectURL(url);
+        alert('Direct share isn\'t supported on this browser, so the PDF has been downloaded instead — you can share it from your Files or Downloads app.');
+      }
+    } catch(err){
+      if (err && err.name === 'AbortError'){
+        // user cancelled the share sheet — no error needed
+      } else {
+        console.error(err);
+        alert('Could not prepare the PDF. Please try again.');
+      }
+    } finally {
+      shareBtn.disabled = false;
+      shareBtn.textContent = originalLabel;
+    }
+  }
+
+  shareBtn.addEventListener('click', shareAsPDF);
+
+  // ---------- Reset ----------
+  clearBtn.addEventListener('click', function(){
+    if (!confirm('Clear all expenses, margins and the photo? This cannot be undone.')) return;
+    expenses = [];
+    expenseSeq = 0;
+    photoDataUrl = null;
+    articleNameEl.value = '';
+    articleDescEl.value = '';
+    photoFrame.innerHTML = '<span class="plus">+</span>';
+    photoInput.value = '';
+    tierEls.forEach(t => { t.input.value = ''; });
+    renderExpenses();
+    recalcAll();
+    summarySection.style.display = 'none';
+    try{ localStorage.removeItem(STORAGE_KEY); }catch(err){}
+    saveStatusText.textContent = 'Changes save automatically on this device';
+  });
+
+  // ---------- Init ----------
+  loadDraft();
+  loadSavedSheets();
+  renderSavedList();
+  recalcAll();
+})();
+
+if ('serviceWorker' in navigator){
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  });
+}
+</script>
+
+</body>
+</html>
