@@ -10,7 +10,7 @@
 <link rel="apple-touch-icon" href="/icon-192.png">
 <title>Jewelry Costing &amp; Pricing Calculator</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=Noto+Nastaliq+Urdu:wght@500;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg:#14110d;
@@ -27,8 +27,20 @@
     --success:#6fae6a;
     --radius-card:18px;
     --radius-field:10px;
+    --radius-btn:10px;
+    --font-heading:'Playfair Display', serif;
+    --font-body:'Inter', sans-serif;
+    --heading-tracking:0;
+    --heading-transform:none;
+    --heading-style:normal;
+    --card-pad-y:20px;
+    --card-pad-x:18px;
+    --card-gap:16px;
+    --card-border-width:1px;
+    --header-bg:radial-gradient(120% 140% at 15% -10%, rgba(201,162,75,.16), transparent 55%), var(--bg);
   }
 
+  /* ===== Rose Gold — soft, airy, elegant italic serif ===== */
   body[data-theme="rose"]{
     --bg:#1a1214;
     --surface:#251a1d;
@@ -40,7 +52,21 @@
     --muted:#ab8d90;
     --border:#3d2a2d;
     --danger-soft:#3a2119;
+    --radius-card:26px;
+    --radius-field:16px;
+    --radius-btn:999px;
+    --font-heading:'Cormorant Garamond', serif;
+    --font-body:'Inter', sans-serif;
+    --heading-tracking:.01em;
+    --heading-style:italic;
+    --card-pad-y:28px;
+    --card-pad-x:24px;
+    --card-gap:22px;
+    --card-border-width:1px;
+    --header-bg:radial-gradient(140% 160% at 20% -20%, rgba(201,138,143,.22), transparent 60%), var(--bg);
   }
+
+  /* ===== Emerald — crisp, structured, ledger-like ===== */
   body[data-theme="emerald"]{
     --bg:#0f1712;
     --surface:#17221b;
@@ -52,7 +78,21 @@
     --muted:#87a892;
     --border:#2b3c31;
     --danger-soft:#3a2119;
+    --radius-card:6px;
+    --radius-field:5px;
+    --radius-btn:5px;
+    --font-heading:'Space Grotesk', sans-serif;
+    --font-body:'Inter', sans-serif;
+    --heading-tracking:.02em;
+    --heading-transform:uppercase;
+    --card-pad-y:16px;
+    --card-pad-x:16px;
+    --card-gap:10px;
+    --card-border-width:0px;
+    --header-bg:linear-gradient(180deg, var(--surface), var(--bg));
   }
+
+  /* ===== Silver Platinum — flat, minimal, modern ===== */
   body[data-theme="silver"]{
     --bg:#121316;
     --surface:#1c1e23;
@@ -64,6 +104,18 @@
     --muted:#8f96a3;
     --border:#343846;
     --danger-soft:#3a2119;
+    --radius-card:14px;
+    --radius-field:10px;
+    --radius-btn:999px;
+    --font-heading:'Inter', sans-serif;
+    --font-body:'Inter', sans-serif;
+    --heading-tracking:-.015em;
+    --heading-transform:none;
+    --card-pad-y:22px;
+    --card-pad-x:18px;
+    --card-gap:14px;
+    --card-border-width:0px;
+    --header-bg:var(--bg);
   }
 
   *{box-sizing:border-box;}
@@ -72,9 +124,10 @@
   body{
     background:var(--bg);
     color:var(--ivory);
-    font-family:'Inter',sans-serif;
+    font-family:var(--font-body);
     -webkit-tap-highlight-color:transparent;
     padding-bottom:56px;
+    transition:background .25s ease, color .25s ease;
   }
 
   .urdu{
@@ -86,22 +139,25 @@
   /* ---------- Header ---------- */
   header{
     padding:34px 20px 22px;
-    background:
-      radial-gradient(120% 140% at 15% -10%, rgba(201,162,75,.16), transparent 55%),
-      var(--bg);
+    background:var(--header-bg);
     border-bottom:1px solid var(--border);
+    transition:background .25s ease;
   }
   .kicker{
     color:var(--gold);
     font-size:13px;
     letter-spacing:.02em;
     margin:0 0 6px;
+    text-transform:var(--heading-transform);
   }
   h1{
-    font-family:'Playfair Display',serif;
+    font-family:var(--font-heading);
+    font-style:var(--heading-style);
     font-weight:600;
     font-size:28px;
     line-height:1.2;
+    letter-spacing:var(--heading-tracking);
+    text-transform:var(--heading-transform);
     margin:0 0 6px;
     color:var(--ivory);
   }
@@ -170,7 +226,7 @@
     border:1px solid var(--border);
     color:var(--muted);
     padding:9px;
-    border-radius:9px;
+    border-radius:var(--radius-btn);
     font-size:13px;
     font-weight:600;
   }
@@ -309,7 +365,7 @@
     border:1px solid var(--border);
     color:var(--gold-soft);
     padding:12px;
-    border-radius:var(--radius-field);
+    border-radius:var(--radius-btn);
     font-size:13.5px;
     font-weight:600;
   }
@@ -317,15 +373,25 @@
   /* ---------- Cards ---------- */
   .card{
     background:var(--surface);
-    border:1px solid var(--border);
+    border:var(--card-border-width) solid var(--border);
     border-radius:var(--radius-card);
-    padding:20px 18px;
-    margin-bottom:16px;
+    padding:var(--card-pad-y) var(--card-pad-x);
+    margin-bottom:var(--card-gap);
+    transition:border-radius .25s ease, padding .25s ease, margin .25s ease;
+  }
+  body[data-theme="emerald"] .card{
+    border-left:3px solid var(--gold);
+    border-top:none;
+    border-right:none;
+    border-bottom:1px solid var(--border);
   }
   .card h2{
-    font-family:'Playfair Display',serif;
+    font-family:var(--font-heading);
+    font-style:var(--heading-style);
     font-weight:600;
     font-size:19px;
+    letter-spacing:var(--heading-tracking);
+    text-transform:var(--heading-transform);
     margin:0 0 4px;
     color:var(--ivory);
   }
@@ -412,7 +478,7 @@
     border:1px solid var(--border);
     color:var(--gold-soft);
     padding:13px 14px;
-    border-radius:var(--radius-field);
+    border-radius:var(--radius-btn);
     font-size:14.5px;
     font-weight:600;
     text-align:left;
@@ -427,17 +493,196 @@
 
   /* ---------- Expense rows ---------- */
   .expense-row{
+    margin-bottom:12px;
+    padding-bottom:12px;
+    border-bottom:1px solid var(--border);
+  }
+  .expense-row:last-child{
+    border-bottom:none;
+    margin-bottom:0;
+    padding-bottom:0;
+  }
+  .expense-row-main{
     display:grid;
     grid-template-columns:1fr 108px 40px;
     gap:8px;
     align-items:center;
-    margin-bottom:10px;
+    margin-bottom:6px;
   }
   .expense-row input[type=number]{text-align:right;}
+  .exp-desc{
+    font-size:13px;
+    padding:9px 12px;
+  }
+  .exp-category{
+    width:100%;
+    background:var(--surface-2);
+    border:1px solid var(--border);
+    border-radius:var(--radius-field);
+    color:var(--ivory);
+    font-family:var(--font-body);
+    font-size:13.5px;
+    padding:10px 12px;
+    margin-bottom:6px;
+    outline:none;
+  }
+  .exp-amount[readonly]{
+    color:var(--gold-soft);
+    background:var(--surface-3);
+  }
+
+  /* ---------- Materials & Categories ---------- */
+  .category-block{
+    background:var(--surface-2);
+    border:1px solid var(--border);
+    border-radius:calc(var(--radius-field) + 4px);
+    padding:14px;
+    margin-bottom:12px;
+  }
+  .category-block:last-child{margin-bottom:0;}
+  .category-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:10px;
+  }
+  .category-name{
+    font-family:var(--font-heading);
+    font-style:var(--heading-style);
+    font-size:15px;
+    font-weight:600;
+    color:var(--ivory);
+  }
+  .category-del{
+    width:30px;height:30px;
+    border-radius:50%;
+    background:var(--danger-soft);
+    color:var(--danger);
+    border:1px solid #4a2a20;
+    font-size:16px;
+    flex-shrink:0;
+  }
+  .material-row-edit{
+    display:grid;
+    grid-template-columns:1fr 90px 36px;
+    gap:6px;
+    align-items:center;
+    margin-bottom:8px;
+  }
+  .material-row-edit input{
+    font-size:13px;
+    padding:9px 10px;
+  }
+  .material-row-edit input.mat-rate{text-align:right;}
+  .mat-del{
+    width:36px;height:36px;
+    border-radius:var(--radius-btn);
+    background:var(--danger-soft);
+    color:var(--danger);
+    border:1px solid #4a2a20;
+    font-size:15px;
+  }
+  .material-empty-note{
+    color:var(--muted);
+    font-size:12.5px;
+    margin:0 0 8px;
+  }
+  .btn-add-material{
+    width:100%;
+    background:transparent;
+    border:1.5px dashed var(--border);
+    color:var(--muted);
+    padding:9px;
+    border-radius:var(--radius-btn);
+    font-size:12.5px;
+    font-weight:600;
+  }
+  .add-category-row{
+    display:flex;
+    gap:8px;
+    margin-top:4px;
+  }
+  .add-category-row input{flex:1;}
+  .btn-add-small{
+    background:var(--gold);
+    color:#1a1408;
+    border:none;
+    padding:0 16px;
+    border-radius:var(--radius-btn);
+    font-size:13px;
+    font-weight:700;
+    white-space:nowrap;
+  }
+
+  /* ---------- Material picker (inside an expense row) ---------- */
+  .materials-panel{
+    background:var(--surface-3);
+    border:1px solid var(--border);
+    border-radius:calc(var(--radius-field) + 2px);
+    padding:10px;
+    margin-bottom:6px;
+  }
+  .mat-search{
+    font-size:13px;
+    padding:9px 11px;
+    margin-bottom:8px;
+  }
+  .mat-picker-list{
+    max-height:220px;
+    overflow-y:auto;
+  }
+  .mat-picker-row{
+    display:grid;
+    grid-template-columns:1fr 70px;
+    gap:8px;
+    align-items:center;
+    padding:6px 0;
+    border-bottom:1px solid var(--border);
+  }
+  .mat-picker-row:last-child{border-bottom:none;}
+  .mat-picker-row .mp-name{
+    font-size:12.5px;
+    color:var(--ivory);
+    line-height:1.3;
+  }
+  .mat-picker-row .mp-rate{
+    display:block;
+    font-size:11px;
+    color:var(--muted);
+    margin-top:1px;
+  }
+  .mat-picker-row input{
+    font-size:12.5px;
+    padding:7px 8px;
+    text-align:right;
+  }
+  .mat-picker-empty{
+    color:var(--muted);
+    font-size:12.5px;
+    padding:8px 2px;
+  }
+  .mat-subtotal{
+    display:flex;
+    justify-content:space-between;
+    font-size:12.5px;
+    color:var(--gold-soft);
+    font-weight:700;
+    margin-top:8px;
+    padding-top:8px;
+    border-top:1px solid var(--border);
+  }
+
+  /* ---------- Material breakdown rows in generated sheet ---------- */
+  .material-cell{
+    padding-left:16px !important;
+    font-size:12px !important;
+    color:var(--muted) !important;
+    border-bottom:1px dashed var(--border) !important;
+  }
   .row-del{
     width:40px;
     height:44px;
-    border-radius:var(--radius-field);
+    border-radius:var(--radius-btn);
     background:var(--danger-soft);
     color:var(--danger);
     border:1px solid #4a2a20;
@@ -458,7 +703,7 @@
     border:1.5px dashed var(--gold);
     color:var(--gold-soft);
     padding:13px;
-    border-radius:var(--radius-field);
+    border-radius:var(--radius-btn);
     font-size:14.5px;
     font-weight:600;
     margin-top:4px;
@@ -477,7 +722,8 @@
     font-size:14px;
   }
   .total-strip .value{
-    font-family:'Playfair Display',serif;
+    font-family:var(--font-heading);
+    font-style:var(--heading-style);
     font-size:24px;
     font-weight:700;
     color:var(--gold-soft);
@@ -487,9 +733,10 @@
   .tier{
     background:var(--surface-2);
     border:1px solid var(--border);
-    border-radius:14px;
-    padding:16px;
-    margin-bottom:12px;
+    border-radius:calc(var(--radius-card) - 4px);
+    padding:calc(var(--card-pad-y) - 4px) calc(var(--card-pad-x) - 2px);
+    margin-bottom:calc(var(--card-gap) - 4px);
+    transition:border-radius .25s ease, padding .25s ease;
   }
   .tier:last-child{margin-bottom:0;}
   .tier-head{
@@ -500,6 +747,10 @@
     gap:10px;
   }
   .tier-head .en{
+    font-family:var(--font-heading);
+    font-style:var(--heading-style);
+    letter-spacing:var(--heading-tracking);
+    text-transform:var(--heading-transform);
     font-size:15px;
     font-weight:600;
     color:var(--ivory);
@@ -534,7 +785,8 @@
   }
   .tier-final .k{font-size:13.5px;color:var(--muted);}
   .tier-final .v{
-    font-family:'Playfair Display',serif;
+    font-family:var(--font-heading);
+    font-style:var(--heading-style);
     font-size:20px;
     font-weight:700;
     color:var(--gold-soft);
@@ -548,7 +800,7 @@
     color:#1a1408;
     border:none;
     padding:16px;
-    border-radius:var(--radius-field);
+    border-radius:var(--radius-btn);
     font-size:16px;
     font-weight:700;
     font-family:'Inter',sans-serif;
@@ -561,7 +813,7 @@
     border:1px solid var(--border);
     color:var(--muted);
     padding:14px;
-    border-radius:var(--radius-field);
+    border-radius:var(--radius-btn);
     font-size:14.5px;
     font-weight:600;
     margin-bottom:10px;
@@ -572,7 +824,7 @@
     border:1px solid #4a2a20;
     color:var(--danger);
     padding:14px;
-    border-radius:var(--radius-field);
+    border-radius:var(--radius-btn);
     font-size:14.5px;
     font-weight:600;
   }
@@ -606,7 +858,8 @@
   }
   .sheet-photo img{width:100%;height:100%;object-fit:cover;}
   .sheet-title .name{
-    font-family:'Playfair Display',serif;
+    font-family:var(--font-heading);
+    font-style:var(--heading-style);
     font-size:18px;
     font-weight:700;
     color:var(--ivory);
@@ -646,6 +899,12 @@
     font-size:12.5px;
   }
   table td.num, table th.num{text-align:right;}
+  .item-desc{
+    display:block;
+    font-size:11.5px;
+    color:var(--muted);
+    margin-top:1px;
+  }
   table tr.total-row td{
     border-bottom:none;
     border-top:1.5px solid var(--gold);
@@ -686,7 +945,7 @@
   }
 
   @media (min-width:480px){
-    .expense-row{grid-template-columns:1fr 120px 40px;}
+    .expense-row-main{grid-template-columns:1fr 120px 40px;}
   }
 </style>
 </head>
@@ -769,10 +1028,22 @@
     </div>
   </section>
 
+  <!-- Materials & Categories -->
+  <section class="card">
+    <h2>Materials &amp; Categories</h2>
+    <p class="card-hint">Set up categories (e.g. Proi, Chapkai) and the materials used in each, with rate per 100. These power the material picker in expenses below.</p>
+    <div id="categoryList"></div>
+    <p class="empty-note" id="categoryEmptyNote">No categories yet — add one below.</p>
+    <div class="add-category-row">
+      <input type="text" id="newCategoryName" placeholder="New category name (e.g. Proi)">
+      <button class="btn-add-small" id="addCategoryBtn" type="button">+ Add Category</button>
+    </div>
+  </section>
+
   <!-- Expenses -->
   <section class="card">
     <h2>Production Expenses</h2>
-    <p class="card-hint">Add every cost that went into making this set — gold, stones, making charges, polish, packaging, anything.</p>
+    <p class="card-hint">Add every cost that went into making this set — gold, stones, making charges, polish, packaging, anything. Pick a category to auto-calculate from materials.</p>
     <div id="expenseList"></div>
     <p class="empty-note" id="emptyNote">No expenses added yet. Tap below to add your first one.</p>
     <button class="btn-add" id="addExpenseBtn" type="button">+ Add New Expense</button>
@@ -878,17 +1149,30 @@
 <script>
 (function(){
   // ---------- State ----------
-  let expenses = [];      // {id, name, amount}
+  let expenses = [];      // {id, name, amount, desc, categoryId, materials:[{materialId,name,ratePer100,qty}]}
   let expenseSeq = 0;
   let photoDataUrl = null;
   let savedSheets = [];   // list of previously saved cost sheets
+  let categories = [];    // [{id, name, materials:[{id, name, ratePer100}]}]
+  let categorySeq = 0;
+  let materialSeq = 0;
+  let openMaterialsExpenseId = null; // which expense row currently has its material picker open
+
+  function escapeHtml(s){
+    return (s || '').replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
   const STORAGE_KEY = 'costingStudioDraft_v1';
   const SAVED_KEY = 'costingStudioSavedSheets_v1';
+  const CATEGORIES_KEY = 'costingStudioCategories_v1';
 
   // ---------- Elements ----------
   const expenseList   = document.getElementById('expenseList');
   const emptyNote      = document.getElementById('emptyNote');
   const addExpenseBtn  = document.getElementById('addExpenseBtn');
+  const categoryListEl   = document.getElementById('categoryList');
+  const categoryEmptyNote= document.getElementById('categoryEmptyNote');
+  const newCategoryName  = document.getElementById('newCategoryName');
+  const addCategoryBtn   = document.getElementById('addCategoryBtn');
   const totalCostEl    = document.getElementById('totalCost');
   const articleNameEl  = document.getElementById('articleName');
   const articleDescEl  = document.getElementById('articleDesc');
@@ -1037,8 +1321,9 @@
     try{
       const draftRef = db.collection('users').doc(user.uid).collection('draft').doc('current');
       const sheetsRef = db.collection('users').doc(user.uid).collection('sheets');
-      const [draftSnap, sheetsSnap] = await Promise.all([draftRef.get(), sheetsRef.get()]);
-      const hasCloudData = draftSnap.exists || !sheetsSnap.empty;
+      const categoriesRef = db.collection('users').doc(user.uid).collection('materials').doc('current');
+      const [draftSnap, sheetsSnap, categoriesSnap] = await Promise.all([draftRef.get(), sheetsRef.get(), categoriesRef.get()]);
+      const hasCloudData = draftSnap.exists || !sheetsSnap.empty || categoriesSnap.exists;
 
       if (hasCloudData){
         const ok = confirm('Cloud backup mila hai is account ka. Kya aap isay is device pe restore karna chahte hain? (Is device ka maujooda data cloud wale se replace ho jayega)');
@@ -1059,6 +1344,14 @@
           savedSheets.sort((a,b) => (b.savedAt || '').localeCompare(a.savedAt || ''));
           persistSavedSheets();
           renderSavedList();
+          if (categoriesSnap.exists){
+            const c = categoriesSnap.data();
+            categories = Array.isArray(c.categories) ? c.categories : [];
+            categorySeq = c.categorySeq || categories.length;
+            materialSeq = c.materialSeq || 0;
+            persistCategories();
+            renderCategoryList();
+          }
           saveDraft();
           syncStatus.textContent = 'Restored from cloud backup ✓';
         } else {
@@ -1085,6 +1378,20 @@
       }catch(err){
         console.error(err);
         syncStatus.textContent = 'Cloud backup failed — will retry on next change.';
+      }
+    }, 900);
+  }
+
+  let cloudCategoriesTimer = null;
+  function syncCategoriesToCloud(){
+    if (!currentUser) return;
+    clearTimeout(cloudCategoriesTimer);
+    cloudCategoriesTimer = setTimeout(async () => {
+      try{
+        await db.collection('users').doc(currentUser.uid).collection('materials').doc('current')
+          .set({categories, categorySeq, materialSeq, updatedAt: new Date().toISOString()});
+      }catch(err){
+        console.error(err);
       }
     }, 900);
   }
@@ -1169,6 +1476,168 @@
     renderExpenses();
   }
 
+  // ---------- Materials & Categories ----------
+  function persistCategories(){
+    try{
+      localStorage.setItem(CATEGORIES_KEY, JSON.stringify({categories, categorySeq, materialSeq}));
+      syncCategoriesToCloud();
+      return true;
+    }catch(err){
+      alert('Could not save — device storage may be full.');
+      return false;
+    }
+  }
+
+  function loadCategories(){
+    let raw;
+    try{ raw = localStorage.getItem(CATEGORIES_KEY); }catch(err){ return; }
+    if (!raw) return;
+    let data;
+    try{ data = JSON.parse(raw); }catch(err){ return; }
+    if (!data) return;
+    categories = Array.isArray(data.categories) ? data.categories : [];
+    categorySeq = data.categorySeq || categories.length;
+    materialSeq = data.materialSeq || 0;
+  }
+
+  function renderCategoryList(){
+    categoryEmptyNote.style.display = categories.length ? 'none' : 'block';
+    categoryListEl.innerHTML = '';
+    categories.forEach(cat => {
+      const block = document.createElement('div');
+      block.className = 'category-block';
+      block.dataset.id = cat.id;
+
+      let materialsHtml = '';
+      if (!cat.materials || cat.materials.length === 0){
+        materialsHtml = `<p class="material-empty-note">No materials yet.</p>`;
+      } else {
+        materialsHtml = cat.materials.map(m => `
+          <div class="material-row-edit" data-cid="${cat.id}" data-mid="${m.id}">
+            <input type="text" class="mat-name" placeholder="Material name" value="${escapeHtml(m.name)}">
+            <input type="number" class="mat-rate" placeholder="Rate/100" inputmode="decimal" min="0" value="${m.ratePer100 === '' || m.ratePer100 === undefined ? '' : m.ratePer100}">
+            <button type="button" class="mat-del" aria-label="Delete material" data-cid="${cat.id}" data-mid="${m.id}">&times;</button>
+          </div>
+        `).join('');
+      }
+
+      block.innerHTML = `
+        <div class="category-head">
+          <span class="category-name">${escapeHtml(cat.name)}</span>
+          <button type="button" class="category-del" aria-label="Delete category" data-cid="${cat.id}">&times;</button>
+        </div>
+        <div class="material-rows">${materialsHtml}</div>
+        <button type="button" class="btn-add-material" data-cid="${cat.id}">+ Add Material</button>
+      `;
+      categoryListEl.appendChild(block);
+    });
+  }
+
+  function addCategory(){
+    const name = newCategoryName.value.trim();
+    if (!name){ alert('Category ka naam likhein (jaise Proi, Chapkai).'); return; }
+    categorySeq += 1;
+    categories.push({id: categorySeq, name: name, materials: []});
+    newCategoryName.value = '';
+    persistCategories();
+    renderCategoryList();
+    renderAllExpenseCategoryOptions();
+  }
+  addCategoryBtn.addEventListener('click', addCategory);
+
+  categoryListEl.addEventListener('click', function(e){
+    const catDel = e.target.closest('.category-del');
+    const addMat = e.target.closest('.btn-add-material');
+    const matDel = e.target.closest('.mat-del');
+
+    if (catDel){
+      const cid = Number(catDel.dataset.cid);
+      if (!confirm('Is category ko delete karna hai? Isme shamil materials bhi hat jayenge.')) return;
+      categories = categories.filter(c => c.id !== cid);
+      // expenses that used this category become manual (keep their last amount)
+      expenses.forEach(x => {
+        if (String(x.categoryId) === String(cid)){ x.categoryId = ''; x.materials = []; }
+      });
+      persistCategories();
+      renderCategoryList();
+      renderExpenses();
+      recalcAll();
+      saveDraft();
+      return;
+    }
+    if (addMat){
+      const cid = Number(addMat.dataset.cid);
+      const cat = categories.find(c => c.id === cid);
+      if (!cat) return;
+      materialSeq += 1;
+      cat.materials = cat.materials || [];
+      cat.materials.push({id: materialSeq, name: '', ratePer100: ''});
+      persistCategories();
+      renderCategoryList();
+      return;
+    }
+    if (matDel){
+      const cid = Number(matDel.dataset.cid);
+      const mid = Number(matDel.dataset.mid);
+      const cat = categories.find(c => c.id === cid);
+      if (!cat) return;
+      cat.materials = (cat.materials || []).filter(m => m.id !== mid);
+      expenses.forEach(x => {
+        if (String(x.categoryId) === String(cid)){
+          x.materials = (x.materials || []).filter(em => String(em.materialId) !== String(mid));
+          recomputeExpenseFromMaterials(x.id);
+          renderMaterialPicker(x.id);
+        }
+      });
+      persistCategories();
+      renderCategoryList();
+      return;
+    }
+  });
+
+  categoryListEl.addEventListener('input', function(e){
+    const row = e.target.closest('.material-row-edit');
+    if (!row) return;
+    const cid = Number(row.dataset.cid);
+    const mid = Number(row.dataset.mid);
+    const cat = categories.find(c => c.id === cid);
+    if (!cat) return;
+    const mat = (cat.materials || []).find(m => m.id === mid);
+    if (!mat) return;
+    if (e.target.classList.contains('mat-name')) mat.name = e.target.value;
+    if (e.target.classList.contains('mat-rate')) mat.ratePer100 = e.target.value;
+    persistCategories();
+    renderAllExpenseCategoryOptions();
+    // refresh every expense that uses this category so rate/name edits update costs live
+    expenses.forEach(x => {
+      if (String(x.categoryId) === String(cid)){
+        recomputeExpenseFromMaterials(x.id);
+        renderMaterialPicker(x.id);
+      }
+    });
+  });
+
+  function renderAllExpenseCategoryOptions(){
+    // keeps each expense row's category <select> options in sync with current categories,
+    // without losing the user's current selection or typed values
+    document.querySelectorAll('.exp-category').forEach(sel => {
+      const row = sel.closest('.expense-row');
+      const id = Number(row.dataset.id);
+      const exp = expenses.find(x => x.id === id);
+      const current = exp ? exp.categoryId : '';
+      sel.innerHTML = categoryOptionsHtml(current);
+    });
+  }
+
+  function categoryOptionsHtml(selectedId){
+    let html = `<option value=""${!selectedId ? ' selected' : ''}>— No category (manual) —</option>`;
+    categories.forEach(cat => {
+      const sel = String(selectedId) === String(cat.id) ? ' selected' : '';
+      html += `<option value="${cat.id}"${sel}>${escapeHtml(cat.name)}</option>`;
+    });
+    return html;
+  }
+
   // ---------- Saved Cost Sheets (named, reopenable list) ----------
   function loadSavedSheets(){
     let raw;
@@ -1233,6 +1702,17 @@
   savedListEl.addEventListener('click', function(e){
     const openBtn = e.target.closest('.open');
     const delBtn = e.target.closest('.del');
+    const galleryDel = e.target.closest('.gallery-del');
+    const galleryTile = e.target.closest('.gallery-tile');
+
+    if (galleryDel){
+      deleteSavedSheet(Number(galleryDel.dataset.id));
+      return;
+    }
+    if (galleryTile){
+      openSavedSheet(Number(galleryTile.dataset.id));
+      return;
+    }
     if (openBtn) openSavedSheet(Number(openBtn.dataset.id));
     if (delBtn) deleteSavedSheet(Number(delBtn.dataset.id));
   });
@@ -1321,7 +1801,10 @@
           photoDataUrl: photoDataUrl,
           margins: tierEls.map(t => t.input.value)
         },
-        savedSheets: savedSheets
+        savedSheets: savedSheets,
+        categories: categories,
+        categorySeq: categorySeq,
+        materialSeq: materialSeq
       };
       const json = JSON.stringify(backup);
       const blob = new Blob([json], {type:'application/json'});
@@ -1381,6 +1864,20 @@
       const result = persistSavedSheets();
       renderSavedList();
 
+      if (Array.isArray(backup.categories) && backup.categories.length){
+        const existingCatIds = new Set(categories.map(c => c.id));
+        backup.categories.forEach(cat => {
+          if (!existingCatIds.has(cat.id)){
+            categories.push(cat);
+            existingCatIds.add(cat.id);
+          }
+        });
+        categorySeq = Math.max(categorySeq, backup.categorySeq || 0);
+        materialSeq = Math.max(materialSeq, backup.materialSeq || 0);
+        persistCategories();
+        renderCategoryList();
+      }
+
       let msg = addedCount + ' saved cost sheet(s) imported.';
       if (result === 'fail'){
         msg = 'Some sheets were imported, but storage is full — delete an older saved sheet to make room for the rest.';
@@ -1418,23 +1915,101 @@
       const row = document.createElement('div');
       row.className = 'expense-row';
       row.dataset.id = exp.id;
+      const hasCategory = !!exp.categoryId;
       row.innerHTML = `
-        <input type="text" class="exp-name" placeholder="Expense name" value="${(exp.name || '').replace(/"/g,'&quot;')}">
-        <input type="number" class="exp-amount" placeholder="0" inputmode="decimal" min="0" value="${exp.amount === '' || exp.amount === undefined ? '' : exp.amount}">
-        <button type="button" class="row-del" aria-label="Delete expense">&times;</button>
+        <div class="expense-row-main">
+          <input type="text" class="exp-name" placeholder="Expense name" value="${(exp.name || '').replace(/"/g,'&quot;')}">
+          <input type="number" class="exp-amount" placeholder="0" inputmode="decimal" min="0" value="${exp.amount === '' || exp.amount === undefined ? '' : exp.amount}" ${hasCategory ? 'readonly' : ''}>
+          <button type="button" class="row-del" aria-label="Delete expense">&times;</button>
+        </div>
+        <select class="exp-category">${categoryOptionsHtml(exp.categoryId)}</select>
+        <div class="materials-panel" style="display:${hasCategory ? 'block' : 'none'};">
+          <input type="text" class="mat-search" placeholder="Search material…">
+          <div class="mat-picker-list"></div>
+          <div class="mat-subtotal"><span>Materials total</span><span class="mat-subtotal-val">Rs. 0</span></div>
+        </div>
+        <input type="text" class="exp-desc" placeholder="Note (optional) — e.g. weight, vendor" value="${(exp.desc || '').replace(/"/g,'&quot;')}">
       `;
       expenseList.appendChild(row);
+      if (hasCategory) renderMaterialPicker(exp.id);
     });
   }
 
   function addExpense(){
     expenseSeq += 1;
-    expenses.push({id: expenseSeq, name:'', amount:''});
+    expenses.push({id: expenseSeq, name:'', amount:'', desc:'', categoryId:'', materials:[]});
     renderExpenses();
     recalcAll();
     saveDraft();
     const inputs = expenseList.querySelectorAll('.exp-name');
     if (inputs.length) inputs[inputs.length - 1].focus();
+  }
+
+  // Builds the searchable material-picker list for one expense row, based on
+  // its selected category and the row's current search text.
+  function renderMaterialPicker(expenseId){
+    const row = expenseList.querySelector(`.expense-row[data-id="${expenseId}"]`);
+    if (!row) return;
+    const exp = expenses.find(x => x.id === expenseId);
+    if (!exp || !exp.categoryId) return;
+    const cat = categories.find(c => String(c.id) === String(exp.categoryId));
+    const listEl = row.querySelector('.mat-picker-list');
+    const searchEl = row.querySelector('.mat-search');
+    if (!listEl) return;
+
+    const query = (searchEl && searchEl.value ? searchEl.value : '').trim().toLowerCase();
+    const materials = (cat && cat.materials) ? cat.materials : [];
+    const filtered = query ? materials.filter(m => (m.name || '').toLowerCase().includes(query)) : materials;
+
+    if (filtered.length === 0){
+      listEl.innerHTML = `<p class="mat-picker-empty">${materials.length ? 'No match found.' : 'No materials in this category yet — add some in "Materials & Categories" above.'}</p>`;
+    } else {
+      listEl.innerHTML = filtered.map(m => {
+        const existing = (exp.materials || []).find(em => String(em.materialId) === String(m.id));
+        const qty = existing ? existing.qty : '';
+        return `
+          <div class="mat-picker-row" data-mid="${m.id}">
+            <div class="mp-name">${escapeHtml(m.name || 'Unnamed')}<span class="mp-rate">Rs. ${fmt(parseFloat(m.ratePer100)||0)} / 100</span></div>
+            <input type="number" class="mat-qty" placeholder="Qty" inputmode="decimal" min="0" value="${qty}">
+          </div>
+        `;
+      }).join('');
+    }
+    updateMaterialSubtotalDisplay(expenseId);
+  }
+
+  function updateMaterialSubtotalDisplay(expenseId){
+    const row = expenseList.querySelector(`.expense-row[data-id="${expenseId}"]`);
+    if (!row) return;
+    const exp = expenses.find(x => x.id === expenseId);
+    if (!exp) return;
+    const subtotal = (exp.materials || []).reduce((sum, m) => sum + ((parseFloat(m.qty)||0) / 100 * (parseFloat(m.ratePer100)||0)), 0);
+    const el = row.querySelector('.mat-subtotal-val');
+    if (el) el.textContent = 'Rs. ' + fmt(subtotal);
+  }
+
+  // Recomputes exp.amount from exp.materials, updates the (readonly) amount field, and saves.
+  function recomputeExpenseFromMaterials(expenseId){
+    const exp = expenses.find(x => x.id === expenseId);
+    if (!exp) return;
+    // refresh name/rate from the master list so edited rates flow through
+    const cat = categories.find(c => String(c.id) === String(exp.categoryId));
+    if (cat){
+      (exp.materials || []).forEach(m => {
+        const master = (cat.materials || []).find(x => String(x.id) === String(m.materialId));
+        if (master){ m.name = master.name; m.ratePer100 = master.ratePer100; }
+      });
+    }
+    const subtotal = (exp.materials || []).reduce((sum, m) => sum + ((parseFloat(m.qty)||0) / 100 * (parseFloat(m.ratePer100)||0)), 0);
+    exp.amount = subtotal;
+    const row = expenseList.querySelector(`.expense-row[data-id="${expenseId}"]`);
+    if (row){
+      const amountInput = row.querySelector('.exp-amount');
+      if (amountInput) amountInput.value = fmt(subtotal);
+      updateMaterialSubtotalDisplay(expenseId);
+    }
+    recalcAll();
+    saveDraft();
   }
 
   expenseList.addEventListener('input', function(e){
@@ -1443,10 +2018,67 @@
     const id = Number(row.dataset.id);
     const exp = expenses.find(x => x.id === id);
     if (!exp) return;
-    if (e.target.classList.contains('exp-name')) exp.name = e.target.value;
-    if (e.target.classList.contains('exp-amount')) exp.amount = e.target.value;
-    recalcAll();
-    saveDraft();
+
+    if (e.target.classList.contains('exp-name')) { exp.name = e.target.value; recalcAll(); saveDraft(); return; }
+    if (e.target.classList.contains('exp-amount') && !e.target.readOnly) { exp.amount = e.target.value; recalcAll(); saveDraft(); return; }
+    if (e.target.classList.contains('exp-desc')) { exp.desc = e.target.value; saveDraft(); return; }
+
+    if (e.target.classList.contains('mat-search')){
+      renderMaterialPicker(id);
+      return;
+    }
+    if (e.target.classList.contains('mat-qty')){
+      const picker = e.target.closest('.mat-picker-row');
+      const mid = picker.dataset.mid;
+      const cat = categories.find(c => String(c.id) === String(exp.categoryId));
+      const mat = cat ? (cat.materials || []).find(m => String(m.id) === String(mid)) : null;
+      if (!mat) return;
+      exp.materials = exp.materials || [];
+      const qtyVal = e.target.value;
+      let line = exp.materials.find(em => String(em.materialId) === String(mid));
+      if (!qtyVal || parseFloat(qtyVal) === 0){
+        exp.materials = exp.materials.filter(em => String(em.materialId) !== String(mid));
+      } else if (line){
+        line.qty = qtyVal;
+        line.name = mat.name;
+        line.ratePer100 = mat.ratePer100;
+      } else {
+        exp.materials.push({materialId: mat.id, name: mat.name, ratePer100: mat.ratePer100, qty: qtyVal});
+      }
+      recomputeExpenseFromMaterials(id);
+      return;
+    }
+  });
+
+  expenseList.addEventListener('change', function(e){
+    if (!e.target.classList.contains('exp-category')) return;
+    const row = e.target.closest('.expense-row');
+    const id = Number(row.dataset.id);
+    const exp = expenses.find(x => x.id === id);
+    if (!exp) return;
+
+    exp.categoryId = e.target.value || '';
+    const panel = row.querySelector('.materials-panel');
+    const amountInput = row.querySelector('.exp-amount');
+
+    if (exp.categoryId){
+      openMaterialsExpenseId = id;
+      panel.style.display = 'block';
+      amountInput.readOnly = true;
+      const cat = categories.find(c => String(c.id) === String(exp.categoryId));
+      if (cat && !exp.name.trim()) {
+        exp.name = cat.name;
+        row.querySelector('.exp-name').value = cat.name;
+      }
+      renderMaterialPicker(id);
+      recomputeExpenseFromMaterials(id);
+    } else {
+      panel.style.display = 'none';
+      amountInput.readOnly = false;
+      exp.materials = [];
+      recalcAll();
+      saveDraft();
+    }
   });
 
   expenseList.addEventListener('click', function(e){
@@ -1530,6 +2162,29 @@
   });
 
   // ---------- Generate cost sheet ----------
+  // Builds the itemized-expenses table body. When withDetail is true and an
+  // expense has a material breakdown, extra indented rows show each material's
+  // qty, rate/100, and line cost underneath it.
+  function buildExpenseTbodyHtml(withDetail){
+    if (expenses.length === 0){
+      return `<tr><td colspan="2" style="color:var(--muted);">No expenses added</td></tr>`;
+    }
+    return expenses.map(e => {
+      const descLine = (e.desc && e.desc.trim())
+        ? `<span class="item-desc">${escapeHtml(e.desc.trim())}</span>`
+        : '';
+      let mainRow = `<tr><td>${escapeHtml(e.name || 'Untitled item')}${descLine}</td><td class="num">${fmt(parseFloat(e.amount) || 0)}</td></tr>`;
+      let detailRows = '';
+      if (withDetail && Array.isArray(e.materials) && e.materials.length){
+        detailRows = e.materials.map(m => {
+          const lineCost = (parseFloat(m.qty)||0) / 100 * (parseFloat(m.ratePer100)||0);
+          return `<tr><td class="material-cell">${escapeHtml(m.name || 'Material')} — qty ${fmt(parseFloat(m.qty)||0)} @ Rs.${fmt(parseFloat(m.ratePer100)||0)}/100</td><td class="num material-cell">${fmt(lineCost)}</td></tr>`;
+        }).join('');
+      }
+      return mainRow + detailRows;
+    }).join('');
+  }
+
   function generateSheet(){
     const total = getTotalCost();
     const name = articleNameEl.value.trim() || 'Untitled Article';
@@ -1549,17 +2204,7 @@
     const sheetPhoto = document.getElementById('sheetPhoto');
     sheetPhoto.innerHTML = photoDataUrl ? `<img src="${photoDataUrl}" alt="${name}">` : '';
 
-    const body = document.getElementById('sheetExpenseBody');
-    body.innerHTML = '';
-    if (expenses.length === 0){
-      body.innerHTML = `<tr><td colspan="2" style="color:var(--muted);">No expenses added</td></tr>`;
-    } else {
-      expenses.forEach(e => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${(e.name || 'Untitled item').replace(/</g,'&lt;')}</td><td class="num">${fmt(parseFloat(e.amount) || 0)}</td>`;
-        body.appendChild(tr);
-      });
-    }
+    document.getElementById('sheetExpenseBody').innerHTML = buildExpenseTbodyHtml(false);
     document.getElementById('sheetTotal').textContent = fmt(total);
 
     const pricingBody = document.getElementById('sheetPricingBody');
@@ -1589,6 +2234,18 @@
   // ---------- Share as PDF (native Android share sheet, e.g. straight to WhatsApp) ----------
   async function shareAsPDF(){
     if (summarySection.style.display === 'none') generateSheet();
+
+    const hasMaterialDetail = expenses.some(e => Array.isArray(e.materials) && e.materials.length > 0);
+    let withDetail = false;
+    if (hasMaterialDetail){
+      withDetail = confirm('Material ki tafseel (quantity, rate, breakdown) bhi PDF mein shamil karni hai?\n\nOK = Haan, tafseel ke saath\nCancel = Nahin, sirf summary (jaise pehle)');
+    }
+
+    const expenseBodyEl = document.getElementById('sheetExpenseBody');
+    const originalExpenseHtml = expenseBodyEl.innerHTML;
+    if (withDetail){
+      expenseBodyEl.innerHTML = buildExpenseTbodyHtml(true);
+    }
 
     const originalLabel = shareBtn.textContent;
     shareBtn.disabled = true;
@@ -1631,6 +2288,7 @@
         alert('Could not prepare the PDF. Please try again.');
       }
     } finally {
+      expenseBodyEl.innerHTML = originalExpenseHtml;
       shareBtn.disabled = false;
       shareBtn.textContent = originalLabel;
     }
@@ -1657,6 +2315,8 @@
   });
 
   // ---------- Init ----------
+  loadCategories();
+  renderCategoryList();
   loadDraft();
   loadSavedSheets();
   renderSavedList();
